@@ -1,17 +1,51 @@
 import sys
 import numpy as np
 
-d = {1: 80, 2: 270, 3: 250, 4: 160, 5: 180}  # потребительский спрос
-M = {1: 500, 2: 500, 3: 500}  # мощность завода
-I = [1, 2, 3, 4, 5]  # Клиенты
-J = [1, 2, 3]  # Заводы
-cost = {(1, 1): 4, (1, 2): 6, (1, 3): 9,
-        (2, 1): 5, (2, 2): 4, (2, 3): 7,
-        (3, 1): 6, (3, 2): 3, (3, 3): 3,
-        (4, 1): 8, (4, 2): 5, (4, 3): 3,
-        (5, 1): 10, (5, 2): 8, (5, 3): 4
-        }  # транспортные расходы
+sclad = int(input("Введите кол-во складов: "))
+print(sclad)
+J = []  # Заводы
+for i in range(sclad):
+    J.append(i + 1)
 
+print(J)
+
+I_col = int(input("Введите кол-во клиентов: "))
+I = []  # Клиенты
+for i in range(I_col):
+    I.append(i + 1)
+
+print("Введите потребительский спрос для клиентов")
+d = {}  # потребительский спрос
+for i in range(I_col):
+    s = input("Спрос: ")
+    d[i + 1] = int(s)
+print(d)
+
+print("Введите мощность завода")
+M = {}  # мощность завода
+for i in range(sclad):
+    M[i + 1] = int(input("Мощьность завода: "))
+print(M)
+
+print("Введите транспортные расходы")
+cost = {}
+for i in range(I_col):
+    for j in range(sclad):
+        c = input('Стоимотсь доставки для дороги(' + str(i + 1) + ',' + str(j + 1) + '): ')
+        cost[(i+1, j +1)] = int(c)
+
+print(cost)
+
+# d = {1: 80, 2: 270, 3: 250, 4: 160, 5: 180}  # потребительский спрос
+# M = {1: 500, 2: 500, 3: 500} # мощность завода
+# I = [1, 2, 3, 4, 5]  # Клиенты
+# J = [1, 2, 3]  # Заводы
+# cost = {(1, 1): 4, (1, 2): 6, (1, 3): 9,
+#         (2, 1): 5, (2, 2): 4, (2, 3): 7,
+#         (3, 1): 6, (3, 2): 3, (3, 3): 3,
+#         (4, 1): 8, (4, 2): 5, (4, 3): 3,
+#         (5, 1): 10, (5, 2): 8, (5, 3): 4
+#         }  # транспортные расходы
 
 # d = {1: 80, 2: 270, 3: 250, 4: 160, 5: 180}  # потребительский спрос
 # M = {1: 500, 2: 1200}  # мощность завода
@@ -51,7 +85,8 @@ print(bounds)
 # объявить целевую функцию.
 
 def objective(x):
-    obj_func = sum(x[idx] * cost2d[idx // len(J), idx % len(J)] for idx in range(cost2d.size))
+    obj_func = sum(x[idx] * cost2d[idx // len(J), idx % len(J)] for idx in
+                   range(cost2d.size))
     return obj_func
 
 
@@ -63,7 +98,8 @@ def const1():
     for idx in range(0, cost2d.size, len(J)):
         tmp_constr = {
             'type': 'eq',
-            'fun': lambda x, idx: d[idx // len(J) + 1] - np.sum(x[idx: idx + len(J)]),
+            'fun': lambda x, idx: d[idx // len(J) + 1] - np.sum(
+                x[idx: idx + len(J)]),
             'args': (idx,)
         }
         tmp.append(tmp_constr)
@@ -76,7 +112,8 @@ def const2():
     for idx in range(0, cost2d.size, len(I)):
         tmp_constr = {
             'type': 'ineq',
-            'fun': lambda x, idx=idx: M[idx // len(I) + 1] - np.sum(x[idx: idx + len(I)])
+            'fun': lambda x, idx=idx: M[idx // len(I) + 1] - np.sum(
+                x[idx: idx + len(I)])
         }
         tmp.append(tmp_constr)
     return tmp
